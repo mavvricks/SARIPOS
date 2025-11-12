@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard | Casa Bocobo Hotel</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css" />
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body class="admin-body">
+    <header class="admin-header">
+        <nav class="admin-nav">
+            <a href="index.html" class="logo-area">
+                <img src="https://s3.ap-south-1.amazonaws.com/buzz.beconf.test/casa-bocobo-hotel/casa-bocobo-hotel-logo.png?_cache=1677736098" alt="Casa Bocobo Hotel Logo" class="h-10 w-auto">
+            </a>
+            <div class="nav-controls">
+                <a href="index.html" class="cta-button">← Back to Site</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="admin-container">
+        <section class="admin-section">
+            <h1 class="admin-title">Hotel Admin Dashboard</h1>
+            <p class="admin-subtitle">Monitor bookings, revenue, occupancy, and service requests.</p>
+        </section>
+
+        <!-- KPIs -->
+        <section class="admin-section">
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <h4>Total Bookings (30d)</h4>
+                    <p id="kpi-bookings" class="kpi-value">0</p>
+                </div>
+                <div class="kpi-card">
+                    <h4>Occupancy Rate (today)</h4>
+                    <p id="kpi-occupancy" class="kpi-value">0%</p>
+                </div>
+                <div class="kpi-card">
+                    <h4>Daily Revenue (today)</h4>
+                    <p id="kpi-revenue" class="kpi-value">₱0</p>
+                </div>
+                <div class="kpi-card">
+                    <h4>Open Service Tickets</h4>
+                    <p id="kpi-tickets" class="kpi-value">0</p>
+                </div>
+                <div class="kpi-card">
+                    <h4>ADR (today)</h4>
+                    <p id="kpi-adr" class="kpi-value">₱0</p>
+                </div>
+                <div class="kpi-card">
+                    <h4>RevPAR (today)</h4>
+                    <p id="kpi-revpar" class="kpi-value">₱0</p>
+                </div>
+                <div class="kpi-card">
+                    <h4>Avg Lead Time</h4>
+                    <p id="kpi-leadtime" class="kpi-value">– d</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Charts -->
+        <section class="admin-section">
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h4>Occupancy: Last 30 Days</h4>
+                    <canvas id="chart-occupancy"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h4>Revenue: Last 30 Days</h4>
+                    <canvas id="chart-revenue"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h4>Occupancy Forecast (Next 14 Days)</h4>
+                    <canvas id="chart-forecast"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bookings Management -->
+        <section class="admin-section">
+            <div class="section-header">
+                <h2>Bookings Management</h2>
+                <div class="section-actions">
+                    <button id="seed-data-btn" class="cta-button secondary">Seed Sample Data</button>
+                    <button id="export-bookings-btn" class="cta-button">Export CSV</button>
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table class="admin-table" id="bookings-table">
+                    <thead>
+                        <tr>
+                            <th>Ref</th>
+                            <th>Guest</th>
+                            <th>Room</th>
+                            <th>Check-in</th>
+                            <th>Check-out</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <div class="pagination" id="bookings-pagination">
+                    <div class="pagination-left">
+                        <label>Rows per page
+                            <select id="bookings-page-size">
+                                <option value="5">5</option>
+                                <option value="10" selected>10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="pagination-right">
+                        <button class="btn-small" id="bookings-prev">Prev</button>
+                        <span id="bookings-page-info">Page 1 of 1</span>
+                        <button class="btn-small" id="bookings-next">Next</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Service Requests -->
+        <section class="admin-section">
+            <div class="section-header">
+                <h2>Service Requests</h2>
+            </div>
+            <div class="table-wrapper">
+                <table class="admin-table" id="tickets-table">
+                    <thead>
+                        <tr>
+                            <th>Ref</th>
+                            <th>Guest</th>
+                            <th>Category</th>
+                            <th>Type</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <div class="pagination" id="tickets-pagination">
+                    <div class="pagination-left">
+                        <label>Rows per page
+                            <select id="tickets-page-size">
+                                <option value="5">5</option>
+                                <option value="10" selected>10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="pagination-right">
+                        <button class="btn-small" id="tickets-prev">Prev</button>
+                        <span id="tickets-page-info">Page 1 of 1</span>
+                        <button class="btn-small" id="tickets-next">Next</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Staff Scheduling -->
+        <section class="admin-section">
+            <div class="section-header">
+                <h2>Predictive Staff Scheduling</h2>
+            </div>
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <h4>Recommended Housekeeping Staff</h4>
+                    <p id="kpi-staff-housekeeping" class="kpi-value">0</p>
+                </div>
+                <div class="kpi-card">
+                    <h4>Recommended Front Desk Staff</h4>
+                    <p id="kpi-staff-frontdesk" class="kpi-value">0</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- System Health / Evaluation -->
+        <section class="admin-section">
+            <div class="section-header">
+                <h2>System Performance & Evaluation</h2>
+            </div>
+            <div class="evaluation-grid">
+                <div class="evaluation-card">
+                    <h4>Forecast MAE (last 14d vs actual)</h4>
+                    <p id="eval-mae" class="kpi-value">–</p>
+                </div>
+                <div class="evaluation-card">
+                    <h4>Data Freshness</h4>
+                    <p id="eval-freshness" class="kpi-value">–</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="admin.js"></script>
+</body>
+</html>
+        <!-- Room Inventory -->
+        <section class="admin-section">
+            <div class="section-header">
+                <h2>Room Inventory</h2>
+            </div>
+            <div class="table-wrapper">
+                <table class="admin-table" id="inventory-table">
+                    <thead>
+                        <tr>
+                            <th>Room Type</th>
+                            <th>Total</th>
+                            <th>Occupied (today)</th>
+                            <th>Available (today)</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <div class="pagination" id="inventory-pagination">
+                    <div class="pagination-left">
+                        <label>Rows per page
+                            <select id="inventory-page-size">
+                                <option value="5">5</option>
+                                <option value="10" selected>10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="pagination-right">
+                        <button class="btn-small" id="inventory-prev">Prev</button>
+                        <span id="inventory-page-info">Page 1 of 1</span>
+                        <button class="btn-small" id="inventory-next">Next</button>
+                    </div>
+                </div>
+            </div>
+        </section>

@@ -1,0 +1,92 @@
+[
+  {
+    "ref": "CBH-101001",
+    "name": "Maria Santos",
+    "room": "Standard King (SK)",
+    "checkin": "2025-10-15T14:00:00.000Z",
+    "checkout": "2025-10-17T12:00:00.000Z",
+    "total": "₱4,725.00",
+    "totalRaw": 4725
+  },
+  {
+    "ref": "CBH-101002",
+    "name": "John Reyes",
+    "room": "Deluxe King (DLXK)",
+    "checkin": "2025-10-20T14:00:00.000Z",
+    "checkout": "2025-10-22T12:00:00.000Z",
+    "total": "₱6,700.00",
+    "totalRaw": 6700
+  },
+  {
+    "ref": "CBH-101003",
+    "name": "Ana Dela Cruz",
+    "room": "Petite Double (PD)",
+    "checkin": "2025-10-25T14:00:00.000Z",
+    "checkout": "2025-10-26T12:00:00.000Z",
+    "total": "₱2,182.50",
+    "totalRaw": 2182.5
+  },
+  {
+    "ref": "CBH-101004",
+    "name": "David Lim",
+    "room": "Executive Suite (EXEC)",
+    "checkin": "2025-10-28T14:00:00.000Z",
+    "checkout": "2025-10-31T12:00:00.000Z",
+    "total": "₱10,597.50",
+    "totalRaw": 10597.5
+  },
+  {
+    "ref": "CBH-101005",
+    "name": "Grace Tan",
+    "room": "Superior Twin (SUP2)",
+    "checkin": "2025-11-01T14:00:00.000Z",
+    "checkout": "2025-11-03T12:00:00.000Z",
+    "total": "₱5,265.00",
+    "totalRaw": 5265
+  },
+  {
+    "ref": "CBH-101006",
+    "name": "Luis Torres",
+    "room": "Standard Twin (ST)",
+    "checkin": "2025-11-03T14:00:00.000Z",
+    "checkout": "2025-11-05T12:00:00.000Z",
+    "total": "₱4,725.00",
+    "totalRaw": 4725
+  },
+  {
+    "ref": "CBH-101007",
+    "name": "Rosa Gomez",
+    "room": "Loft (LOF)",
+    "checkin": "2025-11-05T14:00:00.000Z",
+    "checkout": "2025-11-07T12:00:00.000Z",
+    "total": "₱8,000.00",
+    "totalRaw": 8000
+  },
+  {
+    "ref": "CBH-101008",
+    "name": "Pedro Garcia",
+    "room": "Superior King (SUPK)",
+    "checkin": "2025-11-07T14:00:00.000Z",
+    "checkout": "2025-11-08T12:00:00.000Z",
+    "total": "₱2,812.50",
+    "totalRaw": 2812.5
+  },
+  {
+    "ref": "CBH-101009",
+    "name": "Nina Aquino",
+    "room": "Deluxe Twin (DLX2B)",
+    "checkin": "2025-11-08T14:00:00.000Z",
+    "checkout": "2025-11-10T12:00:00.000Z",
+    "total": "₱5,985.00",
+    "totalRaw": 5985
+  },
+  {
+    "ref": "CBH-101010",
+    "name": "Kyle Rivera",
+    "room": "Petite Single (PS)",
+    "checkin": "2025-11-10T14:00:00.000Z",
+    "checkout": "2025-11-11T12:00:00.000Z",
+    "total": "₱2,182.50",
+    "totalRaw": 2182.5
+  }
+]
