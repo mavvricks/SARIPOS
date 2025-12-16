@@ -187,14 +187,14 @@
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6 animate-pop">
             <h3 class="text-xl font-bold mb-4">Settings</h3>
             <div class="mb-4">
-                <label class="text-xs font-bold text-gray-500 block mb-1">Google App Script URL</label>
-                <input id="dbUrl" class="w-full p-3 border rounded bg-gray-50 text-sm" placeholder="https://script.google.com/macros/s/...">
+                <label class="text-xs font-bold text-gray-500 block mb-1">Google App Script URL (Linked)</label>
+                <input id="dbUrl" class="w-full p-3 border rounded bg-gray-100 text-sm text-gray-500 cursor-not-allowed" disabled>
             </div>
             <div class="mb-4">
                 <label class="text-xs font-bold text-gray-500 block mb-1">Groq API Key</label>
                 <input id="aiKey" type="password" class="w-full p-3 border rounded bg-gray-50 text-sm">
             </div>
-            <button onclick="saveSettings()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold">Save & Sync</button>
+            <button onclick="saveSettings()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold">Save Settings</button>
             <button onclick="document.getElementById('settingsModal').classList.add('hidden')" class="w-full text-gray-500 py-2 mt-2">Close</button>
         </div>
     </div>
@@ -231,27 +231,25 @@
     </div>
 
     <script>
+        // --- HARDCODED DATABASE CONNECTION ---
+        const LINKED_DB_URL = "https://script.google.com/macros/s/AKfycbxu297K4HDNSI1vZNRUCTazAS1fad2EK7Rg6w_YiqRScQ-9F-v_mYHziGMa9qsJU18rsA/exec";
+
         // DATA
         let products = [];
         let sales = [];
         let cart = [];
-        let dbUrl = localStorage.getItem('db_url');
+        let dbUrl = LINKED_DB_URL; // Force use this URL
         let apiKey = localStorage.getItem('groq_key');
 
         // INIT
         window.onload = async () => { 
-            if(dbUrl) await syncData();
-            else {
-                // Fallback demo data if no DB connected yet
-                products = JSON.parse(localStorage.getItem('products')) || [{ id: 1, name: 'Demo Item', cat: 'Misc', price: 10 }];
-            }
+            await syncData(); // Auto sync on load
             nav('pos'); 
             updateStats(); 
         };
 
         // SYNC WITH GOOGLE SHEETS
         async function syncData() {
-            if(!dbUrl) return;
             document.getElementById('syncStatus').classList.remove('hidden');
             try {
                 const res = await fetch(dbUrl);
@@ -264,17 +262,20 @@
                 renderInventory();
                 renderHistory();
                 updateStats();
-            } catch(e) { console.error(e); }
+            } catch(e) { 
+                console.error("Sync Error:", e); 
+                // Fallback to local if offline
+                products = JSON.parse(localStorage.getItem('products')) || [];
+                sales = JSON.parse(localStorage.getItem('sales')) || [];
+            }
             document.getElementById('syncStatus').classList.add('hidden');
         }
 
         async function pushSale(sale) {
-            if(!dbUrl) return;
             fetch(dbUrl, { method: 'POST', body: JSON.stringify({ action: 'add_sale', ...sale }) });
         }
 
         async function pushInventory() {
-            if(!dbUrl) return;
             fetch(dbUrl, { method: 'POST', body: JSON.stringify({ action: 'update_inventory', products: products }) });
         }
 
@@ -490,19 +491,17 @@
         // SETTINGS & AI
         function openSettings() {
             document.getElementById('settingsModal').classList.remove('hidden');
-            document.getElementById('dbUrl').value = dbUrl || '';
+            document.getElementById('dbUrl').value = dbUrl; // Show the active URL
             document.getElementById('aiKey').value = apiKey || '';
         }
 
         async function saveSettings() {
-            const url = document.getElementById('dbUrl').value;
             const key = document.getElementById('aiKey').value;
-            localStorage.setItem('db_url', url);
             localStorage.setItem('groq_key', key);
-            dbUrl = url; apiKey = key;
-            await syncData();
+            apiKey = key;
+            await syncData(); // Retry sync
             document.getElementById('settingsModal').classList.add('hidden');
-            alert('Settings Saved & Synced!');
+            alert('Settings Saved!');
         }
         
         async function sendToAI() {
