@@ -19,63 +19,96 @@
         body { -webkit-tap-highlight-color: transparent; user-select: none; }
         .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
         .pt-safe { padding-top: env(safe-area-inset-top); }
-        .animate-pop { animation: pop 0.2s ease-out; }
-        @keyframes pop { 0% { transform: scale(0.95); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .animate-slide-down { animation: slideDown 0.2s ease-out forwards; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="bg-gray-100 h-screen flex overflow-hidden text-gray-900">
+<body class="bg-gray-100 h-screen flex flex-col md:flex-row overflow-hidden text-gray-900">
 
-    <aside class="w-16 md:w-64 bg-slate-900 text-white flex flex-col shadow-2xl z-40 pt-safe flex-shrink-0 transition-all">
-        <div class="h-16 flex items-center justify-center md:justify-start px-0 md:px-6 border-b border-slate-700">
+    <header class="md:hidden bg-slate-900 text-white p-4 flex justify-between items-center z-50 shrink-0 pt-safe shadow-md relative">
+        <div class="flex items-center gap-2">
+            <i class="fa-solid fa-store text-yellow-400 text-xl"></i>
+            <span class="font-bold text-lg">Mama's</span>
+        </div>
+        <button onclick="toggleMobileMenu()" class="text-white p-2 focus:outline-none">
+            <i class="fa-solid fa-bars text-2xl"></i>
+        </button>
+
+        <div id="mobileMenu" class="absolute top-full left-0 w-full bg-slate-800 text-white shadow-xl hidden flex-col border-t border-slate-700 animate-slide-down">
+            <button onclick="nav('pos')" class="p-4 text-left border-b border-slate-700 hover:bg-slate-700 flex items-center gap-3">
+                <i class="fa-solid fa-cash-register text-blue-400 w-6"></i> POS
+            </button>
+            <button onclick="nav('inventory')" class="p-4 text-left border-b border-slate-700 hover:bg-slate-700 flex items-center gap-3">
+                <i class="fa-solid fa-boxes-stacked text-green-400 w-6"></i> Inventory
+            </button>
+            <button onclick="nav('history')" class="p-4 text-left border-b border-slate-700 hover:bg-slate-700 flex items-center gap-3">
+                <i class="fa-solid fa-clock-rotate-left text-yellow-400 w-6"></i> History
+            </button>
+            <button onclick="nav('analytics')" class="p-4 text-left border-b border-slate-700 hover:bg-slate-700 flex items-center gap-3">
+                <i class="fa-solid fa-chart-pie text-purple-400 w-6"></i> Stats
+            </button>
+            <button onclick="nav('ai')" class="p-4 text-left border-b border-slate-700 hover:bg-slate-700 flex items-center gap-3">
+                <i class="fa-solid fa-robot text-pink-400 w-6"></i> AI Advisor
+            </button>
+            <button onclick="openSettings()" class="p-4 text-left text-gray-400 hover:text-white flex items-center gap-3 bg-slate-900">
+                <i class="fa-solid fa-gear w-6"></i> Settings
+            </button>
+        </div>
+    </header>
+
+    <aside class="hidden md:flex w-64 bg-slate-900 text-white flex-col shadow-2xl z-40 pt-safe flex-shrink-0 transition-all">
+        <div class="h-16 flex items-center justify-start px-6 border-b border-slate-700">
             <i class="fa-solid fa-store text-yellow-400 text-xl"></i> 
-            <span class="hidden md:inline ml-3 font-bold text-lg">Mama's</span>
+            <span class="ml-3 font-bold text-lg">Mama's</span>
         </div>
         
         <nav class="flex-1 p-2 space-y-2 mt-2 overflow-y-auto scrollbar-hide">
-            <button onclick="nav('pos')" id="btn-pos" class="nav-btn w-full p-3 rounded-xl transition flex items-center justify-center md:justify-start text-slate-300 hover:bg-slate-800">
-                <i class="fa-solid fa-cash-register text-xl w-6"></i><span class="hidden md:inline ml-3 font-medium">POS</span>
+            <button onclick="nav('pos')" id="btn-pos" class="nav-btn w-full p-3 rounded-xl transition flex items-center justify-start text-slate-300 hover:bg-slate-800">
+                <i class="fa-solid fa-cash-register text-xl w-8"></i><span class="font-medium">POS</span>
             </button>
-            <button onclick="nav('inventory')" id="btn-inventory" class="nav-btn w-full p-3 rounded-xl transition flex items-center justify-center md:justify-start text-slate-300 hover:bg-slate-800">
-                <i class="fa-solid fa-boxes-stacked text-xl w-6"></i><span class="hidden md:inline ml-3 font-medium">Stocks</span>
+            <button onclick="nav('inventory')" id="btn-inventory" class="nav-btn w-full p-3 rounded-xl transition flex items-center justify-start text-slate-300 hover:bg-slate-800">
+                <i class="fa-solid fa-boxes-stacked text-xl w-8"></i><span class="font-medium">Stocks</span>
             </button>
-            <button onclick="nav('history')" id="btn-history" class="nav-btn w-full p-3 rounded-xl transition flex items-center justify-center md:justify-start text-slate-300 hover:bg-slate-800">
-                <i class="fa-solid fa-clock-rotate-left text-xl w-6"></i><span class="hidden md:inline ml-3 font-medium">History</span>
+            <button onclick="nav('history')" id="btn-history" class="nav-btn w-full p-3 rounded-xl transition flex items-center justify-start text-slate-300 hover:bg-slate-800">
+                <i class="fa-solid fa-clock-rotate-left text-xl w-8"></i><span class="font-medium">History</span>
             </button>
-            <button onclick="nav('analytics')" id="btn-analytics" class="nav-btn w-full p-3 rounded-xl transition flex items-center justify-center md:justify-start text-slate-300 hover:bg-slate-800">
-                <i class="fa-solid fa-chart-pie text-xl w-6"></i><span class="hidden md:inline ml-3 font-medium">Stats</span>
+            <button onclick="nav('analytics')" id="btn-analytics" class="nav-btn w-full p-3 rounded-xl transition flex items-center justify-start text-slate-300 hover:bg-slate-800">
+                <i class="fa-solid fa-chart-pie text-xl w-8"></i><span class="font-medium">Stats</span>
             </button>
-            <button onclick="nav('ai')" id="btn-ai" class="nav-btn w-full p-3 rounded-xl transition flex items-center justify-center md:justify-start text-slate-300 hover:bg-slate-800 mt-4">
-                <i class="fa-solid fa-robot text-xl w-6"></i><span class="hidden md:inline ml-3 font-medium">Advisor</span>
+            <button onclick="nav('ai')" id="btn-ai" class="nav-btn w-full p-3 rounded-xl transition flex items-center justify-start text-slate-300 hover:bg-slate-800 mt-4">
+                <i class="fa-solid fa-robot text-xl w-8"></i><span class="font-medium">Advisor</span>
             </button>
         </nav>
         
-        <div class="p-2 border-t border-slate-800 mb-safe pb-safe text-center">
-            <button onclick="openSettings()" class="text-gray-500 hover:text-white p-3 w-full"><i class="fa-solid fa-gear"></i></button>
+        <div class="p-4 border-t border-slate-800">
+            <button onclick="openSettings()" class="text-gray-500 hover:text-white w-full flex items-center gap-2 px-2">
+                <i class="fa-solid fa-gear"></i> Settings
+            </button>
         </div>
     </aside>
 
-    <main class="flex-1 flex flex-col h-full relative overflow-hidden pt-safe w-full">
+    <main class="flex-1 flex flex-col h-full relative overflow-hidden w-full bg-gray-100">
         
-        <div id="syncStatus" class="bg-blue-600 text-white text-xs text-center py-1 hidden">
-            <i class="fa-solid fa-cloud-arrow-down animate-bounce mr-2"></i> Syncing with Google Sheets...
+        <div id="syncStatus" class="bg-blue-600 text-white text-xs text-center py-1 hidden shadow-md z-30">
+            <i class="fa-solid fa-cloud-arrow-down animate-bounce mr-2"></i> Syncing...
         </div>
 
-        <section id="pos" class="page-section h-full flex relative">
-            <div class="flex-1 p-4 overflow-y-auto scrollbar-hide bg-gray-50 pb-32 md:pb-6">
-                <div class="flex gap-2 mb-4 sticky top-0 bg-gray-50 py-2 z-10">
+        <section id="pos" class="page-section h-full flex relative flex-col md:flex-row">
+            <div class="flex-1 p-4 overflow-y-auto scrollbar-hide pb-32 md:pb-6">
+                <div class="flex gap-2 mb-4 sticky top-0 bg-gray-100 pt-2 pb-2 z-10">
                     <input type="text" id="search" onkeyup="renderPOS()" placeholder="Search..." class="flex-1 p-3 rounded-xl border shadow-sm outline-none focus:ring-2 focus:ring-blue-500 bg-white">
                     <select id="catFilter" onchange="renderPOS()" class="p-3 rounded-xl border shadow-sm bg-white font-medium max-w-[100px]"><option value="All">All</option></select>
                 </div>
                 <div id="posGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3"></div>
             </div>
 
-            <div class="md:hidden fixed bottom-0 left-16 right-0 bg-white border-t p-4 shadow-2xl z-30 flex items-center justify-between pb-safe">
+            <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t p-4 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.1)] z-30 flex items-center justify-between pb-safe">
                 <div>
                     <div class="text-[10px] text-gray-500 font-bold uppercase">Total</div>
                     <div class="text-xl font-bold text-gray-800" id="mobileTotal">₱0.00</div>
                 </div>
                 <button onclick="toggleCart()" class="bg-green-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg flex gap-2 items-center active:scale-95 transition">
-                    Order <span id="mobileCount" class="bg-white text-green-600 text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                    View Cart <span id="mobileCount" class="bg-white text-green-600 text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
                 </button>
             </div>
 
@@ -101,80 +134,60 @@
                 <button onclick="openModal('add')" class="bg-blue-600 text-white px-4 py-2 rounded shadow text-sm font-bold"><i class="fa-solid fa-plus"></i> Add</button>
             </div>
             <div class="bg-white rounded-xl shadow overflow-hidden">
-                <table class="w-full text-left text-sm">
-                    <thead class="bg-gray-100 border-b"><tr><th class="p-3">Item</th><th class="p-3">Price</th><th class="p-3 text-center">Act</th></tr></thead>
-                    <tbody id="inventoryTable"></tbody>
-                </table>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm whitespace-nowrap">
+                        <thead class="bg-gray-100 border-b"><tr><th class="p-3">Item</th><th class="p-3">Category</th><th class="p-3">Price</th><th class="p-3 text-center">Act</th></tr></thead>
+                        <tbody id="inventoryTable"></tbody>
+                    </table>
+                </div>
             </div>
         </section>
 
         <section id="history" class="page-section hidden h-full p-4 overflow-y-auto pb-safe">
             <div class="flex justify-between items-center mb-4">
-                <h2 class="text-2xl font-bold text-gray-800">Sales History</h2>
-                <button onclick="syncData()" class="bg-gray-200 text-gray-700 px-3 py-1 rounded text-sm"><i class="fa-solid fa-rotate"></i> Refresh</button>
+                <h2 class="text-2xl font-bold text-gray-800">History</h2>
+                <button onclick="syncData()" class="bg-gray-200 text-gray-700 px-3 py-1 rounded text-sm"><i class="fa-solid fa-rotate"></i> Sync</button>
             </div>
             <div class="bg-white rounded-xl shadow overflow-hidden">
-                <table class="w-full text-left text-sm">
-                    <thead class="bg-gray-100 border-b">
-                        <tr><th class="p-3">Date</th><th class="p-3">Items</th><th class="p-3 text-right">Total</th></tr>
-                    </thead>
-                    <tbody id="historyTable"></tbody>
-                </table>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm whitespace-nowrap">
+                        <thead class="bg-gray-100 border-b"><tr><th class="p-3">Date</th><th class="p-3">Items</th><th class="p-3 text-right">Total</th></tr></thead>
+                        <tbody id="historyTable"></tbody>
+                    </table>
+                </div>
             </div>
         </section>
 
         <section id="analytics" class="page-section hidden h-full p-4 overflow-y-auto pb-safe">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800">Sales Dashboard</h2>
-            
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Dashboard</h2>
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-blue-500">
-                    <p class="text-xs text-gray-500 font-bold uppercase">Today's Sales</p>
-                    <p id="statDaily" class="text-xl font-bold text-gray-800 mt-1">₱0.00</p>
+                    <p class="text-xs text-gray-500 font-bold">TODAY</p><p id="statDaily" class="text-lg font-bold mt-1">₱0.00</p>
                 </div>
                 <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-green-500">
-                    <p class="text-xs text-gray-500 font-bold uppercase">Transactions</p>
-                    <p id="statCount" class="text-xl font-bold text-gray-800 mt-1">0</p>
+                    <p class="text-xs text-gray-500 font-bold">COUNT</p><p id="statCount" class="text-lg font-bold mt-1">0</p>
                 </div>
                 <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-yellow-500">
-                    <p class="text-xs text-gray-500 font-bold uppercase">Top Seller</p>
-                    <p id="statTop" class="text-sm font-bold text-gray-800 mt-2 truncate">--</p>
+                    <p class="text-xs text-gray-500 font-bold">TOP</p><p id="statTop" class="text-sm font-bold mt-1 truncate">--</p>
                 </div>
                 <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-red-400">
-                    <p class="text-xs text-gray-500 font-bold uppercase">Least Selling</p>
-                    <p id="statLow" class="text-sm font-bold text-gray-800 mt-2 truncate">--</p>
+                    <p class="text-xs text-gray-500 font-bold">LOW</p><p id="statLow" class="text-sm font-bold mt-1 truncate">--</p>
                 </div>
             </div>
-
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                <div class="bg-white p-4 rounded-xl shadow h-80 flex flex-col">
-                    <h3 class="font-bold text-gray-700 mb-2 text-sm">Best Product Combinations</h3>
-                    <div class="flex-1 relative w-full h-full flex items-center justify-center">
-                        <canvas id="comboChart"></canvas>
-                    </div>
-                </div>
-                <div class="bg-white p-4 rounded-xl shadow h-80 flex flex-col">
-                    <h3 class="font-bold text-gray-700 mb-2 text-sm">Peak Hours (Store Activity)</h3>
-                    <div class="flex-1 relative w-full h-full">
-                        <canvas id="peakChart"></canvas>
-                    </div>
-                </div>
+                <div class="bg-white p-4 rounded-xl shadow h-64 flex flex-col"><h3 class="font-bold text-xs mb-2">Combos</h3><div class="flex-1 relative flex justify-center"><canvas id="comboChart"></canvas></div></div>
+                <div class="bg-white p-4 rounded-xl shadow h-64 flex flex-col"><h3 class="font-bold text-xs mb-2">Peak Hours</h3><div class="flex-1 relative"><canvas id="peakChart"></canvas></div></div>
             </div>
-
-            <div class="bg-white p-4 rounded-xl shadow h-72 w-full mb-10">
-                <h3 class="font-bold text-gray-700 mb-2 text-sm">Daily Sales Trend</h3>
-                <div class="relative w-full h-56">
-                    <canvas id="salesChart"></canvas>
-                </div>
-            </div>
+            <div class="bg-white p-4 rounded-xl shadow h-64 w-full mb-10"><h3 class="font-bold text-xs mb-2">Trend</h3><div class="relative h-48"><canvas id="salesChart"></canvas></div></div>
         </section>
 
         <section id="ai" class="page-section hidden h-full flex flex-col bg-gray-50">
-            <div class="p-4 bg-white shadow z-10 pt-safe flex items-center gap-3">
+            <div class="p-4 bg-white shadow z-10 flex items-center gap-3">
                 <div class="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center"><i class="fa-solid fa-robot"></i></div>
-                <h2 class="font-bold">AI Advisor</h2>
+                <h2 class="font-bold">Advisor</h2>
             </div>
             <div id="chatContainer" class="flex-1 overflow-y-auto p-4 space-y-4">
-                <div class="bg-white p-3 rounded-r-xl rounded-bl-xl shadow text-sm max-w-[85%]">Hello! I can read your Google Sheet data. Ask away!</div>
+                <div class="bg-white p-3 rounded-r-xl rounded-bl-xl shadow text-sm max-w-[85%]">Hello! I've read your Google Sheet. Ask me anything.</div>
             </div>
             <div class="p-3 bg-white border-t flex gap-2 pb-safe">
                 <input type="text" id="aiInput" class="flex-1 p-3 rounded-full border bg-gray-100 outline-none" placeholder="Ask...">
@@ -187,14 +200,16 @@
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6 animate-pop">
             <h3 class="text-xl font-bold mb-4">Settings</h3>
             <div class="mb-4">
-                <label class="text-xs font-bold text-gray-500 block mb-1">Google App Script URL (Linked)</label>
-                <input id="dbUrl" class="w-full p-3 border rounded bg-gray-100 text-sm text-gray-500 cursor-not-allowed" disabled>
+                <label class="text-xs font-bold text-gray-500 block mb-1">Database Status</label>
+                <div class="text-sm text-green-600 font-bold bg-green-50 p-2 rounded border border-green-200">
+                    <i class="fa-solid fa-link"></i> Linked to Google Sheets
+                </div>
             </div>
             <div class="mb-4">
                 <label class="text-xs font-bold text-gray-500 block mb-1">Groq API Key</label>
-                <input id="aiKey" type="password" class="w-full p-3 border rounded bg-gray-50 text-sm">
+                <input id="aiKey" type="password" class="w-full p-3 border rounded bg-gray-50 text-sm" placeholder="gsk_...">
             </div>
-            <button onclick="saveSettings()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold">Save Settings</button>
+            <button onclick="saveSettings()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold">Save Key</button>
             <button onclick="document.getElementById('settingsModal').classList.add('hidden')" class="w-full text-gray-500 py-2 mt-2">Close</button>
         </div>
     </div>
@@ -231,24 +246,53 @@
     </div>
 
     <script>
-        // --- HARDCODED DATABASE CONNECTION ---
+        // --- HARDCODED DB ---
         const LINKED_DB_URL = "https://script.google.com/macros/s/AKfycbxu297K4HDNSI1vZNRUCTazAS1fad2EK7Rg6w_YiqRScQ-9F-v_mYHziGMa9qsJU18rsA/exec";
 
         // DATA
-        let products = [];
-        let sales = [];
-        let cart = [];
-        let dbUrl = LINKED_DB_URL; // Force use this URL
+        let products = [], sales = [], cart = [];
+        let dbUrl = LINKED_DB_URL;
         let apiKey = localStorage.getItem('groq_key');
 
         // INIT
         window.onload = async () => { 
-            await syncData(); // Auto sync on load
+            await syncData(); 
             nav('pos'); 
             updateStats(); 
         };
 
-        // SYNC WITH GOOGLE SHEETS
+        // UI HELPERS
+        function toggleMobileMenu() {
+            const m = document.getElementById('mobileMenu');
+            m.classList.toggle('hidden');
+            m.classList.toggle('flex');
+        }
+
+        function nav(id) {
+            document.querySelectorAll('.page-section').forEach(e => e.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+            document.getElementById('mobileMenu').classList.add('hidden'); // Close mobile menu
+            document.getElementById('mobileMenu').classList.remove('flex');
+
+            // Reset Desktop Buttons
+            document.querySelectorAll('.nav-btn').forEach(b => {
+                b.classList.replace('text-white', 'text-slate-300');
+                b.classList.remove('bg-blue-600', 'text-purple-400');
+            });
+            const btn = document.getElementById('btn-' + id);
+            if(btn) {
+                btn.classList.replace('text-slate-300', 'text-white');
+                if(id === 'ai') btn.classList.add('text-purple-400'); 
+                else btn.classList.add('bg-blue-600');
+            }
+
+            if(id === 'pos') renderPOS();
+            if(id === 'inventory') renderInventory();
+            if(id === 'history') renderHistory();
+            if(id === 'analytics') updateStats();
+        }
+
+        // SYNC
         async function syncData() {
             document.getElementById('syncStatus').classList.remove('hidden');
             try {
@@ -258,49 +302,18 @@
                 sales = data.sales;
                 localStorage.setItem('products', JSON.stringify(products));
                 localStorage.setItem('sales', JSON.stringify(sales));
-                renderPOS();
-                renderInventory();
-                renderHistory();
-                updateStats();
+                renderPOS(); renderInventory(); renderHistory(); updateStats();
             } catch(e) { 
-                console.error("Sync Error:", e); 
-                // Fallback to local if offline
+                console.error("Sync Error:", e);
                 products = JSON.parse(localStorage.getItem('products')) || [];
                 sales = JSON.parse(localStorage.getItem('sales')) || [];
             }
             document.getElementById('syncStatus').classList.add('hidden');
         }
+        async function pushSale(sale) { fetch(dbUrl, { method: 'POST', body: JSON.stringify({ action: 'add_sale', ...sale }) }); }
+        async function pushInventory() { fetch(dbUrl, { method: 'POST', body: JSON.stringify({ action: 'update_inventory', products: products }) }); }
 
-        async function pushSale(sale) {
-            fetch(dbUrl, { method: 'POST', body: JSON.stringify({ action: 'add_sale', ...sale }) });
-        }
-
-        async function pushInventory() {
-            fetch(dbUrl, { method: 'POST', body: JSON.stringify({ action: 'update_inventory', products: products }) });
-        }
-
-        // NAV
-        function nav(id) {
-            document.querySelectorAll('.page-section').forEach(e => e.classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
-            document.querySelectorAll('.nav-btn').forEach(b => {
-                b.classList.replace('text-white', 'text-slate-300');
-                b.classList.remove('bg-blue-600', 'text-purple-400');
-            });
-            
-            const btn = document.getElementById('btn-' + id);
-            if(btn) {
-                btn.classList.replace('text-slate-300', 'text-white');
-                if(id === 'ai') btn.classList.add('text-purple-400'); 
-                else btn.classList.add('bg-blue-600');
-            }
-            if(id === 'pos') renderPOS();
-            if(id === 'inventory') renderInventory();
-            if(id === 'history') renderHistory();
-            if(id === 'analytics') updateStats();
-        }
-
-        // POS LOGIC
+        // POS
         function renderPOS() {
             const grid = document.getElementById('posGrid');
             const search = document.getElementById('search').value.toLowerCase();
@@ -312,7 +325,7 @@
             grid.innerHTML = '';
             products.filter(p => (cat==='All' || p.cat===cat) && p.name.toLowerCase().includes(search)).forEach(p => {
                 grid.innerHTML += `
-                <div onclick="addToCart(${p.id})" class="bg-white p-3 rounded-xl shadow-sm border active:scale-95 transition flex flex-col justify-between h-24">
+                <div onclick="addToCart(${p.id})" class="bg-white p-3 rounded-xl shadow-sm border active:scale-95 transition flex flex-col justify-between h-24 cursor-pointer">
                     <div><span class="text-[10px] text-gray-400 font-bold uppercase">${p.cat}</span><h4 class="font-bold text-sm leading-tight line-clamp-2">${p.name}</h4></div>
                     <div class="text-right"><span class="bg-blue-50 text-blue-700 text-xs font-bold px-2 py-1 rounded">₱${p.price}</span></div>
                 </div>`;
@@ -345,11 +358,17 @@
         }
 
         function mod(i, v) { cart[i].qty += v; if(cart[i].qty <= 0) cart.splice(i, 1); renderCart(); }
+        
         function toggleCart() {
             const c = document.getElementById('cartContainer');
-            c.classList.toggle('hidden'); c.classList.toggle('flex'); c.classList.add('animate-slide-up');
+            if(c.classList.contains('hidden')) { c.classList.remove('hidden'); c.classList.add('flex', 'animate-slide-up'); }
+            else { c.classList.add('hidden'); c.classList.remove('flex'); }
         }
-        function clearCart() { cart=[]; document.getElementById('cashInput').value=''; renderCart(); if(window.innerWidth<768) toggleCart(); }
+        
+        function clearCart() { 
+            cart=[]; document.getElementById('cashInput').value=''; renderCart(); 
+            if(window.innerWidth<768) { document.getElementById('cartContainer').classList.add('hidden'); document.getElementById('cartContainer').classList.remove('flex'); }
+        }
         
         function calcChange() {
             const t = parseFloat(document.getElementById('totalDisplay').innerText.replace('₱',''));
@@ -367,8 +386,7 @@
             if(c < t) return alert('Insufficient Cash');
             
             const sale = {id:Date.now(), date:new Date().toISOString(), total:t, items:[...cart]};
-            sales.unshift(sale); 
-            pushSale(sale);
+            sales.unshift(sale); pushSale(sale);
             
             document.getElementById('rTotal').innerText = `₱${t.toFixed(2)}`;
             document.getElementById('rCash').innerText = `₱${c.toFixed(2)}`;
@@ -376,19 +394,28 @@
             document.getElementById('receiptModal').classList.remove('hidden');
             
             cart=[]; document.getElementById('cashInput').value=''; renderCart(); updateStats();
-            if(window.innerWidth<768) document.getElementById('cartContainer').classList.add('hidden');
+            if(window.innerWidth<768) { document.getElementById('cartContainer').classList.add('hidden'); document.getElementById('cartContainer').classList.remove('flex'); }
         }
         
         function closeReceipt() { document.getElementById('receiptModal').classList.add('hidden'); }
 
-        // INVENTORY
+        // INVENTORY & HISTORY
         function renderInventory() {
             const t = document.getElementById('inventoryTable'); t.innerHTML='';
             products.forEach(p => {
-                t.innerHTML += `<tr class="border-b"><td class="p-3">${p.name}</td><td class="p-3">₱${p.price}</td><td class="p-3 text-center"><button onclick="edit(${p.id})" class="text-blue-500 mr-2"><i class="fa-solid fa-pen"></i></button><button onclick="del(${p.id})" class="text-red-500"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                t.innerHTML += `<tr class="border-b"><td class="p-3">${p.name}</td><td class="p-3">${p.cat}</td><td class="p-3">₱${p.price}</td><td class="p-3 text-center"><button onclick="edit(${p.id})" class="text-blue-500 mr-2"><i class="fa-solid fa-pen"></i></button><button onclick="del(${p.id})" class="text-red-500"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+            });
+        }
+        function renderHistory() {
+            const t = document.getElementById('historyTable'); t.innerHTML = '';
+            sales.slice(0, 50).forEach(s => {
+                const date = new Date(s.date).toLocaleDateString();
+                const items = s.items.map(i => `${i.name} (x${i.qty})`).join(', ');
+                t.innerHTML += `<tr class="border-b"><td class="p-3 text-gray-500">${date}</td><td class="p-3 truncate max-w-[150px]">${items}</td><td class="p-3 text-right font-bold">₱${s.total}</td></tr>`;
             });
         }
         
+        // MODALS
         function openModal(mode, id) {
             document.getElementById('productModal').classList.remove('hidden');
             const sel = document.getElementById('editCat'); sel.innerHTML='';
@@ -398,20 +425,11 @@
                 const p = products.find(x=>x.id===id);
                 document.getElementById('editId').value=p.id; document.getElementById('editName').value=p.name;
                 document.getElementById('editPrice').value=p.price; sel.value=p.cat;
-            } else {
-                document.getElementById('editId').value=''; document.forms[0].reset();
-            }
+            } else { document.getElementById('editId').value=''; document.forms[0].reset(); }
         }
         function closeModal() { document.getElementById('productModal').classList.add('hidden'); }
         function edit(id) { openModal('edit', id); }
-        function del(id) { 
-            if(confirm('Delete?')) { 
-                products=products.filter(p=>p.id!==id); 
-                pushInventory(); 
-                renderInventory(); 
-            } 
-        }
-        
+        function del(id) { if(confirm('Delete?')) { products=products.filter(p=>p.id!==id); pushInventory(); renderInventory(); } }
         function saveProduct(e) {
             e.preventDefault();
             const id = document.getElementById('editId').value;
@@ -419,90 +437,46 @@
             const price = parseFloat(document.getElementById('editPrice').value);
             let cat = document.getElementById('editCat').value;
             if(cat==='+ New') cat = prompt('Category:') || 'Misc';
-            
-            if(id) {
-                const idx = products.findIndex(p=>p.id==id); products[idx]={id:parseInt(id),name,price,cat};
-            } else {
-                products.push({id:Date.now(), name, price, cat});
-            }
-            pushInventory(); 
-            closeModal(); renderInventory();
+            if(id) { const idx = products.findIndex(p=>p.id==id); products[idx]={id:parseInt(id),name,price,cat}; } 
+            else { products.push({id:Date.now(), name, price, cat}); }
+            pushInventory(); closeModal(); renderInventory();
         }
 
-        // HISTORY
-        function renderHistory() {
-            const t = document.getElementById('historyTable'); t.innerHTML = '';
-            sales.slice(0, 50).forEach(s => {
-                const date = new Date(s.date).toLocaleDateString();
-                const items = s.items.map(i => `${i.name} (x${i.qty})`).join(', ');
-                t.innerHTML += `<tr class="border-b"><td class="p-3 text-gray-500">${date}</td><td class="p-3 truncate max-w-[150px]">${items}</td><td class="p-3 text-right font-bold">₱${s.total}</td></tr>`;
-            });
-        }
-
-        // STATS (RESTORED JS)
+        // STATS & AI
         let salesChart, comboChart, peakChart;
         function updateStats() {
             const today = new Date().toISOString().split('T')[0];
-            const daily = sales.filter(s => s.date.startsWith(today)).reduce((a,b) => a + b.total, 0);
-            
-            const itemCounts = {};
-            sales.forEach(s => s.items.forEach(i => itemCounts[i.name] = (itemCounts[i.name] || 0) + i.qty));
+            const dSales = sales.filter(s=>s.date.startsWith(today)).reduce((a,b)=>a+b.total,0);
+            const itemCounts = {}; sales.forEach(s => s.items.forEach(i => itemCounts[i.name] = (itemCounts[i.name] || 0) + i.qty));
             const sortedItems = Object.entries(itemCounts).sort((a,b) => b[1] - a[1]);
             const top = sortedItems.length ? `${sortedItems[0][0]} (${sortedItems[0][1]})` : "--";
             
-            const allNames = products.map(p => p.name);
-            const soldNames = Object.keys(itemCounts);
-            const unsold = allNames.filter(n => !soldNames.includes(n));
-            let low = "--";
-            if(unsold.length) low = unsold[0] + " (0)";
-            else if(sortedItems.length) { const l = sortedItems[sortedItems.length-1]; low = `${l[0]} (${l[1]})`; }
-
-            document.getElementById('statDaily').innerText = '₱' + daily.toFixed(2);
+            document.getElementById('statDaily').innerText = `₱${dSales.toFixed(2)}`;
             document.getElementById('statCount').innerText = sales.length;
             document.getElementById('statTop').innerText = top;
-            document.getElementById('statLow').innerText = low;
+            document.getElementById('statLow').innerText = "--"; 
 
-            // Sales Chart
+            // Simple Chart Updates
             const ctxS = document.getElementById('salesChart').getContext('2d');
             if(salesChart) salesChart.destroy();
             const labels=[], data=[];
-            for(let i=6; i>=0; i--) {
-                const d=new Date(); d.setDate(d.getDate()-i); const ds=d.toISOString().split('T')[0];
-                labels.push(ds.slice(5)); data.push(sales.filter(s=>s.date.startsWith(ds)).reduce((a,b)=>a+b.total,0));
-            }
+            for(let i=6; i>=0; i--) { const d=new Date(); d.setDate(d.getDate()-i); const ds=d.toISOString().split('T')[0]; labels.push(ds.slice(5)); data.push(sales.filter(s=>s.date.startsWith(ds)).reduce((a,b)=>a+b.total,0)); }
             salesChart=new Chart(ctxS,{type:'bar',data:{labels,datasets:[{label:'Sales',data,backgroundColor:'#3b82f6',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false}});
 
-            // Combo Chart
-            const pairs={};
-            sales.forEach(s=>{ if(s.items.length>1){ const n=s.items.map(i=>i.name).sort(); for(let i=0;i<n.length;i++)for(let j=i+1;j<n.length;j++) pairs[n[i]+"+"+n[j]]=(pairs[n[i]+"+"+n[j]]||0)+1; }});
+            const pairs={}; sales.forEach(s=>{ if(s.items.length>1){ const n=s.items.map(i=>i.name).sort(); for(let i=0;i<n.length;i++)for(let j=i+1;j<n.length;j++) pairs[n[i]+"+"+n[j]]=(pairs[n[i]+"+"+n[j]]||0)+1; }});
             const sPairs=Object.entries(pairs).sort((a,b)=>b[1]-a[1]).slice(0,5);
             const ctxC = document.getElementById('comboChart').getContext('2d');
             if(comboChart) comboChart.destroy();
-            comboChart=new Chart(ctxC,{type:'doughnut',data:{labels:sPairs.map(p=>p[0]),datasets:[{data:sPairs.map(p=>p[1]),backgroundColor:['#6366f1','#ec4899','#f59e0b','#10b981','#3b82f6']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}}}});
+            if(sPairs.length) comboChart=new Chart(ctxC,{type:'doughnut',data:{labels:sPairs.map(p=>p[0]),datasets:[{data:sPairs.map(p=>p[1]),backgroundColor:['#6366f1','#ec4899','#f59e0b','#10b981','#3b82f6']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}}}});
 
-            // Peak Chart
             const hC=new Array(24).fill(0); sales.forEach(s=>hC[new Date(s.date).getHours()]++);
-            const hL=hC.map((_,i)=>i%6===0?(i>12?i-12+'pm':i+'am'):'');
             const ctxP = document.getElementById('peakChart').getContext('2d');
             if(peakChart) peakChart.destroy();
-            peakChart=new Chart(ctxP,{type:'line',data:{labels:hL,datasets:[{label:'Orders',data:hC,borderColor:'#8b5cf6',backgroundColor:'rgba(139,92,246,0.1)',fill:true,tension:0.4}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{maxTicksLimit:8}}}}});
+            peakChart=new Chart(ctxP,{type:'line',data:{labels:hC.map((_,i)=>i%6===0?(i>12?i-12+'pm':i+'am'):''),datasets:[{label:'Orders',data:hC,borderColor:'#8b5cf6',backgroundColor:'rgba(139,92,246,0.1)',fill:true,tension:0.4}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{maxTicksLimit:8}}}}});
         }
 
-        // SETTINGS & AI
-        function openSettings() {
-            document.getElementById('settingsModal').classList.remove('hidden');
-            document.getElementById('dbUrl').value = dbUrl; // Show the active URL
-            document.getElementById('aiKey').value = apiKey || '';
-        }
-
-        async function saveSettings() {
-            const key = document.getElementById('aiKey').value;
-            localStorage.setItem('groq_key', key);
-            apiKey = key;
-            await syncData(); // Retry sync
-            document.getElementById('settingsModal').classList.add('hidden');
-            alert('Settings Saved!');
-        }
+        function openSettings() { document.getElementById('settingsModal').classList.remove('hidden'); document.getElementById('aiKey').value = apiKey || ''; }
+        function saveSettings() { apiKey = document.getElementById('aiKey').value; localStorage.setItem('groq_key', apiKey); document.getElementById('settingsModal').classList.add('hidden'); }
         
         async function sendToAI() {
             if(!apiKey) return openSettings();
@@ -510,8 +484,7 @@
             const c = document.getElementById('chatContainer');
             c.innerHTML+=`<div class="flex justify-end"><div class="bg-blue-600 text-white p-3 rounded-l-xl rounded-br-xl shadow text-sm">${t}</div></div>`;
             i.value=''; c.scrollTop=c.scrollHeight;
-            
-            const salesTxt = `Today: ${document.getElementById('statDaily').innerText}. Top: ${document.getElementById('statTop').innerText}.`;
+            const salesTxt = `Today: ${document.getElementById('statDaily').innerText}`;
             try {
                 const r = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                     method:"POST", headers:{"Authorization":`Bearer ${apiKey}`,"Content-Type":"application/json"},
