@@ -21,9 +21,6 @@
         .pt-safe { padding-top: env(safe-area-inset-top); }
         .animate-pop { animation: pop 0.2s ease-out; }
         @keyframes pop { 0% { transform: scale(0.95); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        /* Loader */
-        .loader { border: 3px solid #f3f3f3; border-top: 3px solid #3b82f6; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="bg-gray-100 h-screen flex overflow-hidden text-gray-900">
@@ -127,16 +124,48 @@
         </section>
 
         <section id="analytics" class="page-section hidden h-full p-4 overflow-y-auto pb-safe">
-            <h2 class="text-2xl font-bold mb-4 text-gray-800">Stats</h2>
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
-                <div class="bg-white p-4 rounded-xl shadow border-l-4 border-blue-500">
-                    <p class="text-xs text-gray-500 font-bold">SALES</p><p id="statDaily" class="text-xl font-bold">₱0.00</p>
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Sales Dashboard</h2>
+            
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-blue-500">
+                    <p class="text-xs text-gray-500 font-bold uppercase">Today's Sales</p>
+                    <p id="statDaily" class="text-xl font-bold text-gray-800 mt-1">₱0.00</p>
                 </div>
-                <div class="bg-white p-4 rounded-xl shadow border-l-4 border-green-500">
-                    <p class="text-xs text-gray-500 font-bold">COUNT</p><p id="statCount" class="text-xl font-bold">0</p>
+                <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-green-500">
+                    <p class="text-xs text-gray-500 font-bold uppercase">Transactions</p>
+                    <p id="statCount" class="text-xl font-bold text-gray-800 mt-1">0</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-yellow-500">
+                    <p class="text-xs text-gray-500 font-bold uppercase">Top Seller</p>
+                    <p id="statTop" class="text-sm font-bold text-gray-800 mt-2 truncate">--</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-red-400">
+                    <p class="text-xs text-gray-500 font-bold uppercase">Least Selling</p>
+                    <p id="statLow" class="text-sm font-bold text-gray-800 mt-2 truncate">--</p>
                 </div>
             </div>
-            <div class="bg-white p-4 rounded-xl shadow mb-4 h-64"><canvas id="salesChart"></canvas></div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <div class="bg-white p-4 rounded-xl shadow h-80 flex flex-col">
+                    <h3 class="font-bold text-gray-700 mb-2 text-sm">Best Product Combinations</h3>
+                    <div class="flex-1 relative w-full h-full flex items-center justify-center">
+                        <canvas id="comboChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow h-80 flex flex-col">
+                    <h3 class="font-bold text-gray-700 mb-2 text-sm">Peak Hours (Store Activity)</h3>
+                    <div class="flex-1 relative w-full h-full">
+                        <canvas id="peakChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl shadow h-72 w-full mb-10">
+                <h3 class="font-bold text-gray-700 mb-2 text-sm">Daily Sales Trend</h3>
+                <div class="relative w-full h-56">
+                    <canvas id="salesChart"></canvas>
+                </div>
+            </div>
         </section>
 
         <section id="ai" class="page-section hidden h-full flex flex-col bg-gray-50">
@@ -213,7 +242,7 @@
         window.onload = async () => { 
             if(dbUrl) await syncData();
             else {
-                // Fallback demo data
+                // Fallback demo data if no DB connected yet
                 products = JSON.parse(localStorage.getItem('products')) || [{ id: 1, name: 'Demo Item', cat: 'Misc', price: 10 }];
             }
             nav('pos'); 
@@ -241,19 +270,12 @@
 
         async function pushSale(sale) {
             if(!dbUrl) return;
-            // Send background request
-            fetch(dbUrl, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'add_sale', ...sale })
-            });
+            fetch(dbUrl, { method: 'POST', body: JSON.stringify({ action: 'add_sale', ...sale }) });
         }
 
         async function pushInventory() {
             if(!dbUrl) return;
-            fetch(dbUrl, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'update_inventory', products: products })
-            });
+            fetch(dbUrl, { method: 'POST', body: JSON.stringify({ action: 'update_inventory', products: products }) });
         }
 
         // NAV
@@ -344,9 +366,7 @@
             if(c < t) return alert('Insufficient Cash');
             
             const sale = {id:Date.now(), date:new Date().toISOString(), total:t, items:[...cart]};
-            sales.unshift(sale); // Add to local state immediately
-            
-            // Push to Cloud
+            sales.unshift(sale); 
             pushSale(sale);
             
             document.getElementById('rTotal').innerText = `₱${t.toFixed(2)}`;
@@ -386,7 +406,7 @@
         function del(id) { 
             if(confirm('Delete?')) { 
                 products=products.filter(p=>p.id!==id); 
-                pushInventory(); // Sync delete
+                pushInventory(); 
                 renderInventory(); 
             } 
         }
@@ -404,7 +424,7 @@
             } else {
                 products.push({id:Date.now(), name, price, cat});
             }
-            pushInventory(); // Sync update
+            pushInventory(); 
             closeModal(); renderInventory();
         }
 
@@ -418,22 +438,53 @@
             });
         }
 
-        // STATS
-        let chart;
+        // STATS (RESTORED JS)
+        let salesChart, comboChart, peakChart;
         function updateStats() {
             const today = new Date().toISOString().split('T')[0];
-            const dSales = sales.filter(s=>s.date.startsWith(today)).reduce((a,b)=>a+b.total,0);
-            document.getElementById('statDaily').innerText = `₱${dSales.toFixed(2)}`;
-            document.getElementById('statCount').innerText = sales.length;
+            const daily = sales.filter(s => s.date.startsWith(today)).reduce((a,b) => a + b.total, 0);
             
-            const ctx = document.getElementById('salesChart').getContext('2d');
-            if(chart) chart.destroy();
+            const itemCounts = {};
+            sales.forEach(s => s.items.forEach(i => itemCounts[i.name] = (itemCounts[i.name] || 0) + i.qty));
+            const sortedItems = Object.entries(itemCounts).sort((a,b) => b[1] - a[1]);
+            const top = sortedItems.length ? `${sortedItems[0][0]} (${sortedItems[0][1]})` : "--";
+            
+            const allNames = products.map(p => p.name);
+            const soldNames = Object.keys(itemCounts);
+            const unsold = allNames.filter(n => !soldNames.includes(n));
+            let low = "--";
+            if(unsold.length) low = unsold[0] + " (0)";
+            else if(sortedItems.length) { const l = sortedItems[sortedItems.length-1]; low = `${l[0]} (${l[1]})`; }
+
+            document.getElementById('statDaily').innerText = '₱' + daily.toFixed(2);
+            document.getElementById('statCount').innerText = sales.length;
+            document.getElementById('statTop').innerText = top;
+            document.getElementById('statLow').innerText = low;
+
+            // Sales Chart
+            const ctxS = document.getElementById('salesChart').getContext('2d');
+            if(salesChart) salesChart.destroy();
             const labels=[], data=[];
             for(let i=6; i>=0; i--) {
                 const d=new Date(); d.setDate(d.getDate()-i); const ds=d.toISOString().split('T')[0];
                 labels.push(ds.slice(5)); data.push(sales.filter(s=>s.date.startsWith(ds)).reduce((a,b)=>a+b.total,0));
             }
-            chart = new Chart(ctx, {type:'bar',data:{labels,datasets:[{label:'Sales',data,backgroundColor:'#3b82f6',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false}});
+            salesChart=new Chart(ctxS,{type:'bar',data:{labels,datasets:[{label:'Sales',data,backgroundColor:'#3b82f6',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false}});
+
+            // Combo Chart
+            const pairs={};
+            sales.forEach(s=>{ if(s.items.length>1){ const n=s.items.map(i=>i.name).sort(); for(let i=0;i<n.length;i++)for(let j=i+1;j<n.length;j++) pairs[n[i]+"+"+n[j]]=(pairs[n[i]+"+"+n[j]]||0)+1; }});
+            const sPairs=Object.entries(pairs).sort((a,b)=>b[1]-a[1]).slice(0,5);
+            const ctxC = document.getElementById('comboChart').getContext('2d');
+            if(comboChart) comboChart.destroy();
+            comboChart=new Chart(ctxC,{type:'doughnut',data:{labels:sPairs.map(p=>p[0]),datasets:[{data:sPairs.map(p=>p[1]),backgroundColor:['#6366f1','#ec4899','#f59e0b','#10b981','#3b82f6']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}}}});
+
+            // Peak Chart
+            const hC=new Array(24).fill(0); sales.forEach(s=>hC[new Date(s.date).getHours()]++);
+            const hL=hC.map((_,i)=>i%6===0?(i>12?i-12+'pm':i+'am'):'');
+            const ctxP = document.getElementById('peakChart').getContext('2d');
+            if(peakChart) peakChart.destroy();
+            peakChart=new Chart(ctxP,{type:'line',data:{labels:hL,datasets:[{label:'Orders',data:hC,borderColor:'#8b5cf6',backgroundColor:'rgba(139,92,246,0.1)',fill:true,tension:0.4}]},options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{maxTicksLimit:8}}}}});
         }
 
         // SETTINGS & AI
@@ -461,7 +512,7 @@
             c.innerHTML+=`<div class="flex justify-end"><div class="bg-blue-600 text-white p-3 rounded-l-xl rounded-br-xl shadow text-sm">${t}</div></div>`;
             i.value=''; c.scrollTop=c.scrollHeight;
             
-            const salesTxt = `Today: ${document.getElementById('statDaily').innerText}`;
+            const salesTxt = `Today: ${document.getElementById('statDaily').innerText}. Top: ${document.getElementById('statTop').innerText}.`;
             try {
                 const r = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                     method:"POST", headers:{"Authorization":`Bearer ${apiKey}`,"Content-Type":"application/json"},
