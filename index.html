@@ -2,71 +2,100 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="format-detection" content="telephone=no">
+    
     <title>Mama's Tindahan</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
+        /* Hide Scrollbar but allow scrolling */
         .scrollbar-hide::-webkit-scrollbar { display: none; }
-        body { -webkit-tap-highlight-color: transparent; font-family: 'Segoe UI', sans-serif; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Prevent bounce effect on iOS */
+        body { overscroll-behavior-y: none; -webkit-tap-highlight-color: transparent; }
+        
+        /* Animation */
         .animate-pop { animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .animate-slide-up { animation: slideUp 0.3s ease-out; }
         @keyframes pop { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         @keyframes slideUp { 0% { transform: translateY(100%); } 100% { transform: translateY(0); } }
+        
+        /* Safe Area for iPhone/iPad */
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+        .pt-safe { padding-top: env(safe-area-inset-top); }
     </style>
 </head>
-<body class="bg-gray-100 h-screen flex overflow-hidden">
+<body class="bg-gray-100 h-screen flex overflow-hidden font-sans text-gray-900">
 
-    <aside class="w-16 md:w-64 bg-slate-900 text-white flex flex-col shadow-2xl z-40 transition-all duration-300 flex-shrink-0">
+    <aside class="w-16 md:w-64 bg-slate-900 text-white flex flex-col shadow-2xl z-40 transition-all duration-300 flex-shrink-0 pt-safe">
         <div class="p-4 h-16 flex items-center justify-center md:justify-start border-b border-slate-700 whitespace-nowrap overflow-hidden">
             <i class="fa-solid fa-store text-yellow-400 text-xl"></i> 
-            <span class="hidden md:inline ml-3 font-bold text-lg">Mama's Tindahan</span>
+            <span class="hidden md:inline ml-3 font-bold text-lg tracking-tight">Mama's Tindahan</span>
         </div>
         
         <nav class="flex-1 p-2 space-y-2 mt-2 overflow-y-auto scrollbar-hide">
-            <button id="btn-pos" onclick="nav('pos')" class="nav-btn w-full p-3 rounded-xl transition flex items-center justify-center md:justify-start text-slate-300 hover:bg-slate-800">
+            <button id="btn-pos" onclick="nav('pos')" class="nav-btn w-full p-3 rounded-xl transition flex items-center justify-center md:justify-start text-slate-300 hover:bg-slate-800 active:bg-slate-700">
                 <i class="fa-solid fa-cash-register text-xl w-8 text-center"></i> 
                 <span class="hidden md:inline ml-2 font-medium">POS</span>
             </button>
-            <button id="btn-inventory" onclick="nav('inventory')" class="nav-btn w-full p-3 rounded-xl transition flex items-center justify-center md:justify-start text-slate-300 hover:bg-slate-800">
+            <button id="btn-inventory" onclick="nav('inventory')" class="nav-btn w-full p-3 rounded-xl transition flex items-center justify-center md:justify-start text-slate-300 hover:bg-slate-800 active:bg-slate-700">
                 <i class="fa-solid fa-boxes-stacked text-xl w-8 text-center"></i> 
                 <span class="hidden md:inline ml-2 font-medium">Inventory</span>
             </button>
-            <button id="btn-analytics" onclick="nav('analytics')" class="nav-btn w-full p-3 rounded-xl transition flex items-center justify-center md:justify-start text-slate-300 hover:bg-slate-800">
+            <button id="btn-analytics" onclick="nav('analytics')" class="nav-btn w-full p-3 rounded-xl transition flex items-center justify-center md:justify-start text-slate-300 hover:bg-slate-800 active:bg-slate-700">
                 <i class="fa-solid fa-chart-pie text-xl w-8 text-center"></i> 
                 <span class="hidden md:inline ml-2 font-medium">Analytics</span>
             </button>
-            <button id="btn-ai" onclick="nav('ai')" class="nav-btn w-full p-3 rounded-xl transition flex items-center justify-center md:justify-start text-slate-300 hover:bg-slate-800 mt-4">
+            <button id="btn-ai" onclick="nav('ai')" class="nav-btn w-full p-3 rounded-xl transition flex items-center justify-center md:justify-start text-slate-300 hover:bg-slate-800 mt-4 active:bg-slate-700">
                 <i class="fa-solid fa-robot text-xl w-8 text-center"></i> 
                 <span class="hidden md:inline ml-2 font-medium">Advisor</span>
             </button>
         </nav>
         
-        <div class="p-2 border-t border-slate-800 mb-safe">
-            <button onclick="enterApiKey()" class="text-xs text-gray-500 hover:text-white w-full text-center py-2">
-                <i class="fa-solid fa-key"></i>
+        <div class="p-2 border-t border-slate-800 mb-safe pb-safe">
+            <button onclick="enterApiKey()" class="text-xs text-gray-500 hover:text-white w-full text-center py-4">
+                <i class="fa-solid fa-key text-lg"></i>
             </button>
         </div>
     </aside>
 
-    <main class="flex-1 flex flex-col h-full relative overflow-hidden w-full">
+    <main class="flex-1 flex flex-col h-full relative overflow-hidden w-full pt-safe">
         
         <section id="pos" class="page-section h-full flex relative">
             
-            <div class="flex-1 p-4 md:p-6 overflow-y-auto scrollbar-hide bg-gray-50 pb-24 md:pb-6">
+            <div class="flex-1 p-4 md:p-6 overflow-y-auto scrollbar-hide bg-gray-50 pb-32 md:pb-6">
                 <div class="flex gap-2 mb-4 sticky top-0 bg-gray-50 py-2 z-10">
-                    <input type="text" id="search" onkeyup="renderPOS()" placeholder="Search..." class="flex-1 p-3 rounded-xl border shadow-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                    <select id="catFilter" onchange="renderPOS()" class="p-3 rounded-xl border shadow-sm bg-white max-w-[100px] md:max-w-xs">
+                    <input type="text" id="search" onkeyup="renderPOS()" placeholder="Search..." class="flex-1 p-3 rounded-xl border shadow-sm focus:ring-2 focus:ring-blue-500 outline-none text-base">
+                    <select id="catFilter" onchange="renderPOS()" class="p-3 rounded-xl border shadow-sm bg-white max-w-[120px] md:max-w-xs text-sm font-medium">
                         <option value="All">All</option>
                     </select>
                 </div>
                 <div id="posGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4"></div>
             </div>
 
-            <div class="md:hidden fixed bottom-0 left-16 right-0 bg-white border-t p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-30 flex items-center justify-between">
+            <div class="md:hidden fixed bottom-0 left-16 right-0 bg-white border-t p-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-30 flex items-center justify-between pb-safe">
                 <div>
-                    <div class="text-xs text-gray-500 font-bold uppercase">Total Due</div>
+                    <div class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Total Due</div>
                     <div class="text-xl font-bold text-gray-800" id="mobileTotalDisplay">₱0.00</div>
                 </div>
                 <button onclick="toggleCartMobile()" class="bg-green-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg flex items-center gap-2 active:scale-95 transition">
@@ -77,12 +106,12 @@
 
             <div id="cartContainer" class="hidden md:flex flex-col md:w-96 bg-white md:shadow-xl md:border-l z-40 fixed md:relative inset-0 md:inset-auto">
                 
-                <div class="md:hidden p-4 bg-gray-50 border-b flex justify-between items-center">
-                    <button onclick="toggleCartMobile()" class="text-gray-500 hover:text-gray-800">
+                <div class="md:hidden p-4 bg-gray-50 border-b flex justify-between items-center pt-safe">
+                    <button onclick="toggleCartMobile()" class="text-gray-500 hover:text-gray-800 p-2">
                         <i class="fa-solid fa-chevron-down text-xl"></i>
                     </button>
                     <h3 class="font-bold text-gray-800">Current Order</h3>
-                    <button onclick="clearCart()" class="text-red-500 font-bold text-sm">Clear</button>
+                    <button onclick="clearCart()" class="text-red-500 font-bold text-sm p-2">Clear</button>
                 </div>
 
                 <div class="hidden md:flex p-4 border-b bg-gray-50 justify-between items-center">
@@ -118,26 +147,28 @@
         <section id="inventory" class="page-section hidden h-full p-4 md:p-6 overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-xl md:text-2xl font-bold text-gray-800">Inventory</h2>
-                <button onclick="openModal('add')" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 text-sm font-bold">
+                <button onclick="openModal('add')" class="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 text-sm font-bold active:scale-95 transition">
                     <i class="fa-solid fa-plus mr-1"></i> Add Item
                 </button>
             </div>
-            <div class="bg-white rounded-xl shadow overflow-x-auto">
-                <table class="w-full text-left min-w-[600px] md:min-w-0">
-                    <thead class="bg-gray-100 border-b text-gray-600 font-bold text-sm">
-                        <tr>
-                            <th class="p-4">Name</th>
-                            <th class="p-4">Category</th>
-                            <th class="p-4">Price</th>
-                            <th class="p-4 text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="inventoryTable" class="text-sm"></tbody>
-                </table>
+            <div class="bg-white rounded-xl shadow overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left min-w-[600px] md:min-w-0">
+                        <thead class="bg-gray-100 border-b text-gray-600 font-bold text-sm">
+                            <tr>
+                                <th class="p-4">Name</th>
+                                <th class="p-4">Category</th>
+                                <th class="p-4">Price</th>
+                                <th class="p-4 text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTable" class="text-sm"></tbody>
+                    </table>
+                </div>
             </div>
         </section>
 
-        <section id="analytics" class="page-section hidden h-full p-4 md:p-6 overflow-y-auto">
+        <section id="analytics" class="page-section hidden h-full p-4 md:p-6 overflow-y-auto pb-safe">
             <h2 class="text-xl md:text-2xl font-bold mb-6 text-gray-800">Dashboard</h2>
             
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -199,7 +230,7 @@
             </div>
             <div class="p-3 bg-white border-t flex gap-2 pb-safe">
                 <input type="text" id="aiInput" placeholder="Ask your advisor..." class="flex-1 p-3 rounded-full border bg-gray-100 focus:bg-white focus:ring-2 focus:ring-purple-500 outline-none transition text-sm">
-                <button onclick="sendToAI()" class="bg-purple-600 text-white w-10 h-10 rounded-full hover:bg-purple-700 transition flex items-center justify-center shadow-lg">
+                <button onclick="sendToAI()" class="bg-purple-600 text-white w-10 h-10 rounded-full hover:bg-purple-700 transition flex items-center justify-center shadow-lg active:scale-90">
                     <i class="fa-solid fa-paper-plane text-sm"></i>
                 </button>
             </div>
@@ -214,19 +245,19 @@
                     <input type="hidden" id="editId">
                     <div class="mb-4">
                         <label class="block text-gray-600 text-xs font-bold mb-1">Name</label>
-                        <input type="text" id="editName" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
+                        <input type="text" id="editName" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-gray-50" required>
                     </div>
                     <div class="mb-4">
                         <label class="block text-gray-600 text-xs font-bold mb-1">Category</label>
-                        <select id="editCat" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 bg-white outline-none"></select>
+                        <select id="editCat" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 bg-white outline-none"></select>
                     </div>
                     <div class="mb-6">
                         <label class="block text-gray-600 text-xs font-bold mb-1">Price (₱)</label>
-                        <input type="number" id="editPrice" step="0.25" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
+                        <input type="number" id="editPrice" step="0.25" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-gray-50" required>
                     </div>
                     <div class="flex justify-end gap-3">
                         <button type="button" onclick="closeModal()" class="px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 font-bold text-sm">Cancel</button>
-                        <button type="submit" class="px-6 py-2 rounded-lg bg-blue-600 text-white font-bold shadow text-sm">Save</button>
+                        <button type="submit" class="px-6 py-2 rounded-lg bg-blue-600 text-white font-bold shadow text-sm active:scale-95 transition">Save</button>
                     </div>
                 </form>
             </div>
@@ -249,7 +280,7 @@
                     <div class="flex justify-between text-blue-600 font-bold text-lg"><span>Change</span><span id="receiptChange">₱0.00</span></div>
                 </div>
                 <div class="bg-gray-50 rounded-lg p-3 mb-6 max-h-32 overflow-y-auto text-xs border" id="receiptItems"></div>
-                <button onclick="closeReceipt()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold shadow-lg text-sm">New Order</button>
+                <button onclick="closeReceipt()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold shadow-lg text-sm active:scale-95 transition">New Order</button>
             </div>
         </div>
     </div>
@@ -276,7 +307,7 @@
             document.querySelectorAll('.page-section').forEach(el => el.classList.add('hidden'));
             document.getElementById(section).classList.remove('hidden');
             document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.className = "nav-btn w-full p-3 rounded-xl transition flex items-center justify-center md:justify-start text-slate-300 hover:bg-slate-800";
+                btn.className = "nav-btn w-full p-3 rounded-xl transition flex items-center justify-center md:justify-start text-slate-300 hover:bg-slate-800 active:bg-slate-700";
             });
             const activeBtn = document.getElementById('btn-' + section);
             if(activeBtn) {
@@ -346,14 +377,13 @@
                             <div class="text-xs text-gray-500">₱${parseFloat(item.price).toFixed(2)} x ${item.qty}</div>
                         </div>
                         <div class="flex items-center gap-2">
-                            <button onclick="modQty(${idx}, -1)" class="w-7 h-7 rounded-full bg-gray-100 text-red-500 font-bold">-</button>
+                            <button onclick="modQty(${idx}, -1)" class="w-7 h-7 rounded-full bg-gray-100 text-red-500 font-bold active:bg-gray-200">-</button>
                             <span class="font-bold w-4 text-center text-sm">${item.qty}</span>
-                            <button onclick="modQty(${idx}, 1)" class="w-7 h-7 rounded-full bg-gray-100 text-green-600 font-bold">+</button>
+                            <button onclick="modQty(${idx}, 1)" class="w-7 h-7 rounded-full bg-gray-100 text-green-600 font-bold active:bg-gray-200">+</button>
                         </div>
                     </div>`;
             });
             
-            // Update Totals
             const totalStr = '₱' + total.toFixed(2);
             document.getElementById('totalDisplay').innerText = totalStr;
             document.getElementById('mobileTotalDisplay').innerText = totalStr;
@@ -372,8 +402,10 @@
             document.getElementById('cashInput').value = '';
             document.getElementById('changeDisplay').innerText = '₱0.00';
             renderCart(); 
-            // If on mobile, close cart
-            if(window.innerWidth < 768) document.getElementById('cartContainer').classList.add('hidden');
+            if(window.innerWidth < 768) {
+                document.getElementById('cartContainer').classList.add('hidden');
+                document.getElementById('cartContainer').classList.remove('flex');
+            }
         }
 
         function calculateChange() {
@@ -400,7 +432,6 @@
             sales.push({ id: Date.now(), date: new Date().toISOString(), total: total, items: [...cart] });
             localStorage.setItem('sales', JSON.stringify(sales));
             
-            // Show Receipt
             document.getElementById('receiptTotal').innerText = '₱' + total.toFixed(2);
             document.getElementById('receiptCash').innerText = '₱' + cash.toFixed(2);
             document.getElementById('receiptChange').innerText = '₱' + change.toFixed(2);
@@ -413,7 +444,6 @@
             document.getElementById('cashInput').value = '';
             renderCart();
             updateStats();
-            // Close mobile cart if open
             document.getElementById('cartContainer').classList.add('hidden');
             document.getElementById('cartContainer').classList.remove('flex');
         }
@@ -428,7 +458,7 @@
                 tbody.innerHTML += `
                     <tr class="border-b hover:bg-gray-50">
                         <td class="p-4 font-medium text-gray-800">${p.name}</td>
-                        <td class="p-4 hidden md:table-cell"><span class="px-2 py-1 bg-gray-200 text-xs rounded-full">${p.cat}</span></td>
+                        <td class="p-4"><span class="px-2 py-1 bg-gray-200 text-xs rounded-full">${p.cat}</span></td>
                         <td class="p-4">₱${parseFloat(p.price).toFixed(2)}</td>
                         <td class="p-4 text-center space-x-2">
                             <button onclick="openModal('edit', ${p.id})" class="text-blue-500 p-2"><i class="fa-solid fa-pen-to-square"></i></button>
@@ -438,7 +468,7 @@
             });
         }
 
-        // --- MODAL (PRODUCT) ---
+        // --- MODAL ---
         function openModal(mode, id = null) {
             const modal = document.getElementById('productModal');
             const title = document.getElementById('modalTitle');
@@ -512,7 +542,6 @@
             document.getElementById('statTop').innerText = top;
             document.getElementById('statLow').innerText = low;
 
-            // Chart Logic (Simplified for brevity)
             const ctxS = document.getElementById('salesChart').getContext('2d');
             if(salesChart) salesChart.destroy();
             const labels=[], data=[];
@@ -522,7 +551,6 @@
             }
             salesChart=new Chart(ctxS,{type:'bar',data:{labels,datasets:[{label:'Sales',data,backgroundColor:'#3b82f6',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false}});
 
-            // Combo Chart
             const pairs={};
             sales.forEach(s=>{ if(s.items.length>1){ const n=s.items.map(i=>i.name).sort(); for(let i=0;i<n.length;i++)for(let j=i+1;j<n.length;j++) pairs[n[i]+"+"+n[j]]=(pairs[n[i]+"+"+n[j]]||0)+1; }});
             const sPairs=Object.entries(pairs).sort((a,b)=>b[1]-a[1]).slice(0,5);
@@ -530,7 +558,6 @@
             if(comboChart) comboChart.destroy();
             if(sPairs.length) comboChart=new Chart(ctxC,{type:'doughnut',data:{labels:sPairs.map(p=>p[0]),datasets:[{data:sPairs.map(p=>p[1]),backgroundColor:['#6366f1','#ec4899','#f59e0b','#10b981','#3b82f6']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}}}});
 
-            // Peak Chart
             const hC=new Array(24).fill(0); sales.forEach(s=>hC[new Date(s.date).getHours()]++);
             const hL=hC.map((_,i)=>i%6===0?(i>12?i-12+'pm':i+'am'):'');
             const ctxP = document.getElementById('peakChart').getContext('2d');
